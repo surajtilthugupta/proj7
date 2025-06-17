@@ -1,29 +1,29 @@
 import React, { useState, useMemo } from 'react';
 import { Table, Button, Modal, message, Form, Input, Alert } from 'antd';
-import { useUsers, useDeleteUser, useUpdateUser, useCreateUser } from './hooks/useUsers';
+import { usePosts, useDeletePosts, useUpdatePosts, useCreatePosts } from './hooks/usePosts';
 import 'antd/dist/reset.css';
 
 function App() {
-  const { data: users, isLoading, isError, error } = useUsers();
-  const deleteUser = useDeleteUser();
-  const updateUser = useUpdateUser();
-  const createUser = useCreateUser();
+  const { data: posts, isLoading, isError, error } = usePosts();
+  const deletePost = useDeletePosts();
+  const updatePost = useUpdatePosts();
+  const createPost = useCreatePosts();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedPost, setSelectedPost] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [form] = Form.useForm();
 
-  const showDeleteModal = (user) => {
-    setSelectedUser(user);
+  const showDeleteModal = (post) => {
+    setSelectedPost(post);
     setIsDeleteModalOpen(true);
   };
 
-  const showEditModal = (user) => {
-    setSelectedUser(user);
-    form.setFieldsValue({ title: user.title, body: user.body });
+  const showEditModal = (post) => {
+    setSelectedPost(post);
+    form.setFieldsValue({ title: post.title, body: post.body });
     setIsEditModalOpen(true);
   };
 
@@ -34,7 +34,7 @@ function App() {
 
   const handleDelete = async () => {
     try {
-      await deleteUser.mutateAsync(selectedUser.id);
+      await deletePost.mutateAsync(selectedPost.id);
       message.success('Post deleted successfully');
       setIsDeleteModalOpen(false);
     } catch (err) {
@@ -45,7 +45,7 @@ function App() {
   const handleUpdate = async () => {
     try {
       const values = await form.validateFields();
-      await updateUser.mutateAsync({ id: selectedUser.id, values });
+      await updatePost.mutateAsync({ id: selectedPost.id, values });
       message.success('Post updated successfully');
       setIsEditModalOpen(false);
     } catch (err) {
@@ -56,7 +56,7 @@ function App() {
   const handleCreate = async () => {
     try {
       const values = await form.validateFields();
-      await createUser.mutateAsync(values);
+      await createPost.mutateAsync(values);
       message.success('Post created successfully');
       setIsCreateModalOpen(false);
     } catch (err) {
@@ -64,12 +64,12 @@ function App() {
     }
   };
 
-  const filteredUsers = useMemo(() => {
-    return (users || []).filter((user) =>
-      user.title.toLowerCase().includes(searchText.toLowerCase()) ||
-      user.body.toLowerCase().includes(searchText.toLowerCase())
+  const filteredposts = useMemo(() => {
+    return (posts || []).filter((post) =>
+      post.title.toLowerCase().includes(searchText.toLowerCase()) ||
+      post.body.toLowerCase().includes(searchText.toLowerCase())
     );
-  }, [users, searchText]);
+  }, [posts, searchText]);
 
   const columns = [
     {
@@ -121,7 +121,7 @@ function App() {
 
       <Table
         loading={isLoading}
-        dataSource={filteredUsers}
+        dataSource={filteredposts}
         rowKey="id"
         columns={columns}
       />
@@ -135,7 +135,7 @@ function App() {
         okText="Yes"
         cancelText="No"
       >
-        <p>Are you sure you want to delete this post titled "{selectedUser?.title}"?</p>
+        <p>Are you sure you want to delete this post titled "{selectedPost?.title}"?</p>
       </Modal>
 
       {/* Edit Modal */}

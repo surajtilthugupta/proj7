@@ -3,9 +3,9 @@ import axios from 'axios';
 
 const API_URL = 'https://jsonplaceholder.typicode.com/posts';
 
-export const useUsers = () => {
+export const usePosts = () => {
   return useQuery({
-    queryKey: ['users'],
+    queryKey: ['posts'],
     queryFn: async () => {
       try {
         const { data } = await axios.get(API_URL);
@@ -17,7 +17,7 @@ export const useUsers = () => {
   });
 };
 
-export const useDeleteUser = () => {
+export const useDeletePosts = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id) => {
@@ -29,14 +29,14 @@ export const useDeleteUser = () => {
       }
     },
     onSuccess: (deletedId) => {
-      queryClient.setQueryData(['users'], (oldData) =>
-        oldData ? oldData.filter((user) => user.id !== deletedId) : []
+      queryClient.setQueryData(['posts'], (oldData) =>
+        oldData ? oldData.filter((post) => post.id !== deletedId) : []
       );
     },
   });
 };
 
-export const useUpdateUser = () => {
+export const useUpdatePosts = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, values }) => {
@@ -48,7 +48,7 @@ export const useUpdateUser = () => {
       }
     },
     onSuccess: (updatedPost) => {
-      queryClient.setQueryData(['users'], (oldData) =>
+      queryClient.setQueryData(['posts'], (oldData) =>
         oldData
           ? oldData.map((post) => (post.id === updatedPost.id ? updatedPost : post))
           : []
@@ -57,7 +57,7 @@ export const useUpdateUser = () => {
   });
 };
 
-export const useCreateUser = () => {
+export const useCreatePosts = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (values) => {
@@ -69,7 +69,7 @@ export const useCreateUser = () => {
       }
     },
     onSuccess: (newPost) => {
-      queryClient.setQueryData(['users'], (oldData) =>
+      queryClient.setQueryData(['posts'], (oldData) =>
         oldData ? [newPost, ...oldData] : [newPost]
       );
     },
